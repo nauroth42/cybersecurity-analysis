@@ -1,5 +1,5 @@
 """
-config_item1c.py
+config.py
 Central configuration for the multi-label 10-K classifier project.
 All other scripts import paths and constants from here.
 """
@@ -8,23 +8,22 @@ from pathlib import Path
 
 # Project-root directory (determined automatically; no hard-coded drive letters)
 # ROOT_DIR = Path(__file__).resolve().parent.parent
-ROOT_DIR = "../rsc/"
+ROOT_DIR = "../"
+# TEMP_DIR = "~/temp/"
+TEMP_DIR = "~/temp/"
 
 # Key sub-directories
-CODE = ROOT_DIR + "code/"
-DATA = ROOT_DIR + "data/"
-MODEL = ROOT_DIR + "models/"
-DOCS = ROOT_DIR + "docs/"
+CODE  = ROOT_DIR + "code/"
+DATA  = ROOT_DIR + "data/"
+MODEL = TEMP_DIR + "models/"
 
-CODE_DIR   = Path(CODE)
-DATA_DIR   = Path(DATA)
-MODEL_DIR  = Path(MODEL)
-DOCS_DIR   = Path(DOCS)
+CODE_DIR  = Path(CODE)
+DATA_DIR  = Path(DATA)
+MODEL_DIR = Path(MODEL)
 
 # Data locations (relative paths keep the repo portable)
-RAW_10K_DIR          = Path(DATA + "raw_10k/")
-PROCESSED_TRAIN_DF   = DATA + "training_df.csv"
-INFERENCE_TEXT_DIR   = Path(DATA + "item_1c/")
+PROCESSED_TRAIN_DF = DATA + "training_df.csv"
+INFERENCE_TEXT_DIR = Path(DATA + "item_1c/")
 
 # Output tables
 MODEL_COMPARISON_CSV   = MODEL + "model_comparison_results.csv"
@@ -60,23 +59,24 @@ Governance structure and board oversight specifics — Governance is often an en
 LABEL_COLS = [
     "frameworks", # Frameworks & Standards, not required by SEC
     "governance", # Governance Structure (Management Role), not required by SEC
-    "risk management", # Risk Management Processes, required by SEC (assessment, mgmt, not ERM)
-    "third-party", # Third-Party Risk Management (TPRM), not required by SEC
-    "incident response", # Incident Response & Business Continuity, not required by SEC
+    "risk", # Risk Management Processes, required by SEC (assessment, mgmt, not ERM)
+    "third_party", # Third-Party Risk Management (TPRM), not required by SEC
+    "incident_response", # Incident Response & Business Continuity, not required by SEC
     "training", # Training & Culture, not required by SEC
     "compliance", # Compliance & External Assessment, not required by SEC
+    "audit", # Auditing as part of cybersec governance, not required by SEC
     "board" # Board Involvement (Oversight), required by SEC
 ]
 
 # Shared training hyperparameters
 NUM_EPOCHS        = 4
-TRAIN_BATCH_SIZE  = 4 # former: 4
-EVAL_BATCH_SIZE   = 4 # former: 4
-LOGGING_STEPS     = 50 # former: 50
+TRAIN_BATCH_SIZE  = 4
+EVAL_BATCH_SIZE   = 4
+LOGGING_STEPS     = 50
 METRIC_KEY        = "f1_micro"
 SAVE_TOTAL_LIMIT  = 1   # keep only the latest checkpoint per model
 
 # Inference-time settings
 CHUNK_SIZE         = 510     # special tokens add to 512
-AGGREGATION_METHOD = "average"
+AGGREGATION_METHOD = "max"
 THRESHOLD          = 0.5

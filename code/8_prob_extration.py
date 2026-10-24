@@ -1,7 +1,204 @@
-# 04_infer_documents.py
-# Loads the best checkpoint chosen in 03_pick_checkpoints.py, scores every
-# .txt file in data/item_1c, and writes a tidy CSV with probabilities and
-# binary predictions.
+"""
+8_prob_extraction.py
+
+Probability Extraction and Large-Scale Inference Framework
+==========================================================
+
+Purpose
+-------
+This script applies a previously fine-tuned transformer model to a
+large collection of unseen documents and extracts prediction
+probabilities for every target category.
+
+Unlike model training scripts, this program focuses on production-scale
+inference and probability generation.
+
+The resulting probability estimates can be used for:
+
+* Cybersecurity disclosure analysis
+* SEC Item 1C classification
+* Risk disclosure measurement
+* Governance analysis
+* Strategy disclosure analysis
+* Regulatory compliance research
+* Longitudinal disclosure studies
+* Financial text analytics
+
+Research Context
+----------------
+This script represents one of the final stages in the machine learning
+pipeline.
+
+Overall Workflow
+----------------
+
+    1_data_acquisition.py
+            ↓
+    2_data_extraction_cleansing.py
+            ↓
+    3_data_labeling.py
+            ↓
+    4_data_partitioning.py
+            ↓
+    5_transformer_finetuning.py
+            ↓
+    6_checkpoint_selection.py
+            ↓
+    7_performance_measuring.py
+            ↓
+    8_prob_extraction.py
+
+The script loads the best-performing checkpoint selected during model
+evaluation and applies it to previously unseen text documents.
+
+Objectives
+----------
+The system is designed to:
+
+1. Load the best checkpoint identified during validation.
+2. Read all available inference documents.
+3. Skip documents already processed.
+4. Generate probabilities for each label.
+5. Convert probabilities into binary predictions.
+6. Store partial results for fault tolerance.
+7. Produce a consolidated prediction dataset.
+
+Input Files
+-----------
+Checkpoint Selection File
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Produced by:
+
+    6_checkpoint_selection.py
+
+Contains:
+
+    * Model name
+    * Checkpoint identifier
+    * Performance statistics
+
+Inference Documents
+~~~~~~~~~~~~~~~~~~~
+
+Directory:
+
+    data/item_1c/
+
+Typical contents:
+
+    company_001.txt
+    company_002.txt
+    company_003.txt
+
+Output Files
+------------
+Partial Output
+~~~~~~~~~~~~~~
+
+Used for fault-tolerant processing:
+
+    inference_partial.csv
+
+Final Output
+~~~~~~~~~~~~
+
+Contains final document classifications:
+
+    inference_results.csv
+
+Output Structure
+----------------
+
+Each row typically contains:
+
+    filename
+    probability_<label>
+    prediction_<label>
+
+Example:
+
+    filename
+    probability_governance
+    prediction_governance
+    probability_strategy
+    prediction_strategy
+
+Chunking Strategy
+-----------------
+Transformer architectures generally support a maximum sequence length
+of approximately 512 tokens.
+
+Since SEC filings and cybersecurity disclosures frequently exceed this
+limit, the script divides longer documents into smaller segments.
+
+Each segment is independently evaluated and subsequently aggregated.
+
+Aggregation Methods
+-------------------
+
+The aggregation method is controlled through:
+
+    AGGREGATION_METHOD
+
+Possible approaches include:
+
+Mean Aggregation
+    Average probability across all chunks.
+
+Maximum Aggregation
+    Use highest observed probability.
+
+Weighted Aggregation
+    Weight probabilities according to chunk size.
+
+Hardware Support
+----------------
+The script automatically detects available hardware.
+
+Supported execution environments:
+
+* NVIDIA CUDA GPU
+* CPU
+
+When a CUDA-compatible GPU is available, inference speed is
+substantially improved.
+
+Dependencies
+------------
+Python Standard Library
+
+* csv
+* math
+* pathlib
+
+Third-Party Libraries
+
+* pandas
+* numpy
+* torch
+* transformers
+* tqdm
+
+Author
+------
+Markus Nauroth
+
+Institution
+-----------
+Southern Illinois University Edwardsville
+
+Research Areas
+--------------
+* Cybersecurity
+* Artificial Intelligence
+* Natural Language Processing
+* Financial Disclosure Analysis
+
+Version
+-------
+1.0
+"""
 
 import csv
 import math
@@ -67,7 +264,39 @@ print(f"{len(all_txt)} total files, {len(done)} already done, {len(to_score)} ne
 # ----------------------------------------------------------
 # 4. Helper to score one document
 # ----------------------------------------------------------
-def score_file(path: Path) -> dict:
+def main() -> None:
+    """
+    Execute the complete probability extraction workflow.
+
+    This function orchestrates the end-to-end inference process,
+    including model loading, checkpoint recovery, document
+    selection, probability generation, intermediate persistence,
+    and final result creation.
+
+    Returns
+    -------
+    None
+
+    Workflow
+    --------
+    1. Load best checkpoint information.
+    2. Initialize tokenizer.
+    3. Initialize transformer model.
+    4. Identify unprocessed files.
+    5. Execute inference.
+    6. Save intermediate results.
+    7. Merge and deduplicate outputs.
+    8. Save final prediction table.
+
+    Fault Tolerance
+    ---------------
+    Intermediate prediction results are continuously written to
+    disk to minimize data loss if execution is interrupted.
+
+    This is especially valuable when processing thousands of SEC
+    filings or large collections of cybersecurity disclosures.
+    """
+
     text = path.read_text(encoding="utf-8", errors="ignore")
     tokens = tokenizer.encode(text, add_special_tokens=False)
 
