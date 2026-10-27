@@ -189,7 +189,7 @@ from config import (
 # ----------------------------------------------------------------------
 
 raw_csv_path = Path(
-    "../data/labeled_training_sample_1c.csv"
+    "../data/3_labeled_sentences.csv"
 ).expanduser().resolve()
 
 if not raw_csv_path.is_file():

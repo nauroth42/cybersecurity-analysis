@@ -50,6 +50,8 @@ requester (name and/or email) via `set_identity()`. Replace the
 placeholder `"<email>"` with a valid contact email before running.
 """
 
+# pip install edgartools
+
 import re
 import csv
 from edgar import set_identity, Company
@@ -106,7 +108,7 @@ def read_cik():
     - No header row is skipped; if the CSV file has a header row, it will
       be read as if it were a CIK value.
     """
-    with open('../data/cik_sample.csv', mode='r', newline='\n', encoding='utf-8-sig') as csv_file:
+    with open('../data/cik_all.csv', mode='r', newline='\n', encoding='utf-8-sig') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=',', quotechar='|')
 
         for row in csv_reader:
@@ -232,7 +234,7 @@ if __name__ == "__main__":
 
     # Identify this script/user to SEC EDGAR (required for automated access).
     # Replace "<email>" with an actual contact email before running.
-    set_identity('<email>')
+    set_identity('mnaurot@siue.edu')
 
     # Populate the global `cik_list` with all CIKs to process.
     read_cik()

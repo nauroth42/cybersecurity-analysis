@@ -77,7 +77,7 @@ import sys
 # Configuration
 # ---------------------------------------------------------------------
 
-YEAR = 2024
+YEAR = 2026
 INPUT_FILE = f'../data/item1c_{YEAR}_raw.csv'
 OUTPUT_FILE = f'../data/item1c_{YEAR}_clean.csv'
 
@@ -176,15 +176,19 @@ def process_file(input_file: str, output_file: str) -> None:
             year = row[1]
             filing_date = row[2]
             reporting_date = row[3]
-            raw_text = row[4].strip("[]")
+            raw_txt = row[4].strip("[]")
+            clean_txt = clean_text(raw_txt)
 
             writer.writerow([
                 cik,
                 year,
                 filing_date,
                 reporting_date,
-                clean_text(raw_text)
+                clean_txt
             ])
+
+            with open(f'../data/item_1c/{cik}_{year}.txt', 'w') as txt_file:
+                txt_file.write(clean_txt)
 
 
 def main() -> None:

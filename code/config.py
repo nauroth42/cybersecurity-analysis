@@ -10,7 +10,7 @@ from pathlib import Path
 # ROOT_DIR = Path(__file__).resolve().parent.parent
 ROOT_DIR = "../"
 # TEMP_DIR = "~/temp/"
-TEMP_DIR = "~/temp/"
+TEMP_DIR = "../temp/"
 
 # Key sub-directories
 CODE  = ROOT_DIR + "code/"
@@ -53,19 +53,12 @@ Security awareness and training programs — Some companies specified how cyber 
 Management expertise and CISO credentials — disclosure of specific qualifications, certifications (e.g., CISSP), prior roles, and years of experience of the responsible officer.
 Governance structure and board oversight specifics — Governance is often an entire subsection in Section 1C, detailing how companies internally manage cybersecurity-related processes and identify process owners, disclosing quarterly cybersecurity risk assessments and board communication of these assessments. Hyperproof
 """
-# Multi-label schema
-# https://hyperproof.io/resource/cybersecurity-in-financial-disclosures-10-k-filings/
 
 LABEL_COLS = [
-    "frameworks", # Frameworks & Standards, not required by SEC
-    "governance", # Governance Structure (Management Role), not required by SEC
-    "risk", # Risk Management Processes, required by SEC (assessment, mgmt, not ERM)
-    "third_party", # Third-Party Risk Management (TPRM), not required by SEC
-    "incident_response", # Incident Response & Business Continuity, not required by SEC
-    "training", # Training & Culture, not required by SEC
-    "compliance", # Compliance & External Assessment, not required by SEC
-    "audit", # Auditing as part of cybersec governance, not required by SEC
-    "board" # Board Involvement (Oversight), required by SEC
+    "risk_mgmt", # Quantifies the threat and provide guidance to the firm on how much protection it needs
+    "governance", # System of rules, structures, and decision-making authority that sets direction and defines values
+    "compliance", # Aligns day-to-day operations with external laws (like GDPR, HIPAA, or SEC regulations) and internal governance policies
+    "oversight", # Operational function that checks and monitors whether those rules and goals are actually being followed
 ]
 
 # Shared training hyperparameters
@@ -78,5 +71,6 @@ SAVE_TOTAL_LIMIT  = 1   # keep only the latest checkpoint per model
 
 # Inference-time settings
 CHUNK_SIZE         = 510     # special tokens add to 512
+BATCH_SIZE         = 1
 AGGREGATION_METHOD = "max"
 THRESHOLD          = 0.5
